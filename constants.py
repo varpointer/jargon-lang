@@ -14,6 +14,7 @@ KEYWORDS: dict[str, str] = {
     "loop_condition": "while",
     "control_next": "continue",
     "control_end": "break",
+    "loop_threepart": "for",
 }
 TYPES: dict[str, _Type] = {
     "int": _Type.INT,
@@ -23,9 +24,9 @@ TYPES: dict[str, _Type] = {
 }
 
 VERSION_MAJOR = 0
-VERSION_MINOR = 19
+VERSION_MINOR = 20
 VERSION_PATCH = 0
 
 RELEASE_YEAR  = 2025
-RELEASE_MONTH = 11
-RELEASE_DAY   = 24
+RELEASE_MONTH = 12
+RELEASE_DAY   = 14

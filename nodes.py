@@ -155,13 +155,13 @@ class IfNode(Node):
 
 class WhileNode(Node):
     def __init__(self, condition: Node, block: Node, pos_start: pos.Position):
-        self.condition = condition
+        self.cond = condition
         self.block = block
         self.pos_start = pos_start
         self.pos_end = block.pos_end
     def __repr__(self):
         return (
-            f"[while {self.condition} {self.block}]"
+            f"[while {self.cond} {self.block}]"
         )
 
 class ContinueNode(Node):
@@ -182,3 +182,15 @@ class BreakNode(Node):
             f"[break]"
         )
 
+class ForNode(Node):
+    def __init__(self, initial: Node, condition: Node, iteration: Node, block: Node, pos_start: pos.Position):
+        self.pos_start = pos_start
+        self.pos_end = block.pos_end
+        self.init = initial
+        self.cond = condition
+        self.iter = iteration
+        self.block = block
+    def __repr__(self):
+        return (
+            f"[for [{self.init}; {self.cond}; {self.iter}] {self.block}]"
+        )

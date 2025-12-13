@@ -69,7 +69,7 @@ class Parser:
             if res.err: return res
             node = statement.get_success()
             return res.success(n.BlockNode([node], node.pos_start, node.pos_end))
-    def parse_statement(self) -> Result:
+    def parse_statement(self, semicolon_required = True) -> Result:
         res = Result()
         if self.current_token.match_keyword(KEYWORDS["declare_var"]):
             pos_start = self.current_token.pos_start
@@ -136,12 +136,43 @@ class Parser:
             token = self.current_token
             self.advance()
             return res.success(n.BreakNode(token.pos_start, token.pos_end))
-        else:
-            parse_res = res.process(self.parse_expression())
+        elif self.current_token.match_keyword(KEYWORDS["loop_threepart"]):
+            pos_start = self.current_token.pos_start
+            self.advance()
+            if self.current_token.token_type != TokenType.L_PAREN:
+                return res.error(Error("Expected '('", self.current_token.pos_start, self.current_token.pos_end))
+            self.advance()
+
+            initial = res.process(self.parse_statement())
+            if res.err: return res
+
+            condition = res.process(self.parse_expression())
             if res.err: return res
             if self.current_token.token_type != TokenType.SEMICOLON: 
                 return res.error(Error("Expected semicolon", self.current_token.pos_start, self.current_token.pos_end))
             self.advance()
+
+            iteration = res.process(self.parse_statement(semicolon_required=False))
+            if res.err: return res
+
+            if self.current_token.token_type != TokenType.R_PAREN:
+                return res.error(Error("Expected ')'", self.current_token.pos_start, self.current_token.pos_end))
+            self.advance()
+
+            self.loops_inside += 1
+            block = res.process(self.parse_block())
+            if res.err: return res
+            self.loops_inside -= 1
+
+            return res.success(n.ForNode(initial.get_success(), condition.get_success(), iteration.get_success(), block.get_success(), pos_start))
+
+        else:
+            parse_res = res.process(self.parse_expression())
+            if res.err: return res
+            if semicolon_required:
+                if self.current_token.token_type != TokenType.SEMICOLON: 
+                    return res.error(Error("Expected semicolon", self.current_token.pos_start, self.current_token.pos_end))
+                self.advance()
             return parse_res
     def parse_expression(self) -> Result:
         return self.parse_equality_expr()

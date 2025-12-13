@@ -1,5 +1,5 @@
 # JargonLang
-Version 0.19.0 (2025/11/24) 
+Version 0.20.0 (2025/12/14) 
 
 File extension: .jgl
 
@@ -68,6 +68,9 @@ Control statement used in loops to skip the code after and enter the next iterat
 ## `break`
 ```while (cond) break;```
 Control statement used to end a loop
+## ```for (init; cond; iter) { code; }```
+Used for 3-part loops.\ 
+`init` gets executed, then `iter` followed by `code` get repeated as long as `cond` is true
 # Misc
 ## Parentheses `(a)`
 https://study.com/learn/lesson/parentheses-math-rules-examples.html
