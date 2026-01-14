@@ -183,7 +183,7 @@ class BreakNode(Node):
         )
 
 class ForNode(Node):
-    def __init__(self, initial: Node, condition: Node, iteration: Node, block: Node, pos_start: pos.Position):
+    def __init__(self, initial: Node | None, condition: Node | None, iteration: Node | None, block: Node, pos_start: pos.Position):
         self.pos_start = pos_start
         self.pos_end = block.pos_end
         self.init = initial

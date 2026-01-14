@@ -1,5 +1,5 @@
 # JargonLang
-Version 0.20.0 (2025/12/14) 
+Version 0.20.1 (2025/1/14) 
 
 File extension: .jgl
 
@@ -70,7 +70,8 @@ Control statement used in loops to skip the code after and enter the next iterat
 Control statement used to end a loop
 ## ```for (init; cond; iter) { code; }```
 Used for 3-part loops.\ 
-`init` gets executed, then `iter` followed by `code` get repeated as long as `cond` is true
+`init` gets executed, then `iter` followed by `code` get repeated as long as `cond` is true\
+If `init` or `iter` are omitted, they will be skipped. If `cond` is omitted, it will allways evaluate to true.
 # Misc
 ## Parentheses `(a)`
 https://study.com/learn/lesson/parentheses-math-rules-examples.html

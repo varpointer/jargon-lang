@@ -146,13 +146,19 @@ class Parser:
             initial = res.process(self.parse_statement())
             if res.err: return res
 
-            condition = res.process(self.parse_expression())
-            if res.err: return res
-            if self.current_token.token_type != TokenType.SEMICOLON: 
-                return res.error(Error("Expected semicolon", self.current_token.pos_start, self.current_token.pos_end))
+            if self.current_token.token_type == TokenType.SEMICOLON:
+                condition = Result()
+            else:
+                condition = res.process(self.parse_expression())
+                if res.err: return res
+                if self.current_token.token_type != TokenType.SEMICOLON: 
+                    return res.error(Error("Expected semicolon", self.current_token.pos_start, self.current_token.pos_end))
             self.advance()
 
-            iteration = res.process(self.parse_statement(semicolon_required=False))
+            if self.current_token.token_type == TokenType.R_PAREN:
+                iteration = Result()
+            else:
+                iteration = res.process(self.parse_statement(semicolon_required=False))
             if res.err: return res
 
             if self.current_token.token_type != TokenType.R_PAREN:
@@ -164,7 +170,7 @@ class Parser:
             if res.err: return res
             self.loops_inside -= 1
 
-            return res.success(n.ForNode(initial.get_success(), condition.get_success(), iteration.get_success(), block.get_success(), pos_start))
+            return res.success(n.ForNode(initial.ok, condition.ok, iteration.ok, block.get_success(), pos_start))
 
         else:
             parse_res = res.process(self.parse_expression())
@@ -173,6 +179,7 @@ class Parser:
                 if self.current_token.token_type != TokenType.SEMICOLON: 
                     return res.error(Error("Expected semicolon", self.current_token.pos_start, self.current_token.pos_end))
                 self.advance()
+            print(self.current_token)
             return parse_res
     def parse_expression(self) -> Result:
         return self.parse_equality_expr()
@@ -304,7 +311,6 @@ class Parser:
                 return res
             if node: 
                 node = n.BinaryOpNode(node, operator, right.get_success())
-                self.advance()
             else:
                 node = n.BinaryOpNode(left.get_success(), operator, right.get_success())
         return res.success(node)
