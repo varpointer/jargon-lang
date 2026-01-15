@@ -1,5 +1,5 @@
 # JargonLang
-Version 0.21.0 (2025/1/15) 
+Version 0.22.0 (2025/1/15) 
 
 File extension: .jgl
 
@@ -87,6 +87,9 @@ Control statement used to end a loop
 Used for 3-part loops.\ 
 `init` gets executed, then `iter` followed by `code` get repeated as long as `cond` is true\
 If `init` or `iter` are omitted, they will be skipped. If `cond` is omitted, it will allways evaluate to true.
+## ```foreach (element in container) { code; }```
+Used for iterating over `container` \
+For each element in `container` (which gets assigned to `element`), `code` is executed.
 # Misc
 ## Parentheses `(a)`
 https://study.com/learn/lesson/parentheses-math-rules-examples.html

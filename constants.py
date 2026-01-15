@@ -15,6 +15,8 @@ KEYWORDS: dict[str, str] = {
     "control_next": "continue",
     "control_end": "break",
     "loop_threepart": "for",
+    "loop_iter": "foreach",
+    "value_in": "in",
 }
 TYPES: dict[str, _Type] = {
     "int": _Type.INT,
@@ -24,7 +26,7 @@ TYPES: dict[str, _Type] = {
 }
 
 VERSION_MAJOR = 0
-VERSION_MINOR = 21
+VERSION_MINOR = 22
 VERSION_PATCH = 0
 
 RELEASE_YEAR  = 2026

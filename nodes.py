@@ -205,3 +205,14 @@ class ArrayNode(Node):
             f"(array {self.elements})" 
         )
    
+class ForEachNode(Node):
+    def __init__(self, var_name: str, container: Node, block: Node, pos_start: pos.Position):
+        self.pos_start = pos_start
+        self.pos_end = block.pos_end
+        self.var_name = var_name
+        self.container = container
+        self.block = block
+    def __repr__(self):
+        return (
+            f"[foreach [{self.var_name} in {self.container}] {self.block}]"
+        )

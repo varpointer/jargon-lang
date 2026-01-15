@@ -171,7 +171,29 @@ class Parser:
             self.loops_inside -= 1
 
             return res.success(n.ForNode(initial.ok, condition.ok, iteration.ok, block.get_success(), pos_start))
-
+        elif self.current_token.match_keyword(KEYWORDS["loop_iter"]):
+            pos_start = self.current_token.pos_start
+            self.advance()
+            if self.current_token.token_type != TokenType.L_PAREN:
+                return res.error(Error("Expected '('", self.current_token.pos_start, self.current_token.pos_end))
+            self.advance()
+            if self.current_token.token_type != TokenType.IDENTIFIER:
+                return res.error(Error("Expected variable name", self.current_token.pos_start, self.current_token.pos_end))
+            var_name = self.current_token.value
+            self.advance()
+            if not self.current_token.match_keyword(KEYWORDS["value_in"]):
+                return res.error(Error(f"Expected '{KEYWORDS["value_in"]}'", self.current_token.pos_start, self.current_token.pos_end))
+            self.advance()
+            container = res.process(self.parse_expression())
+            if res.err: return res
+            container = container.get_success()
+            if self.current_token.token_type != TokenType.R_PAREN:
+                return res.error(Error("Expected ')'", self.current_token.pos_start, self.current_token.pos_end))
+            self.advance()
+            block = res.process(self.parse_block())
+            if res.err: return res
+            block = block.get_success()
+            return res.success(n.ForEachNode(var_name, container, block, pos_start))
         else:
             parse_res = res.process(self.parse_expression())
             if res.err: return res
@@ -307,7 +329,7 @@ class Parser:
             self.advance()
             return res.success(n.ArrayNode(elements, pos_start, self.current_token.pos_end))
 
-        return res.error(Error("Unexpected token. Expected expression", self.current_token.pos_start, self.current_token.pos_end))
+        return res.error(Error("Unexpected token.", self.current_token.pos_start, self.current_token.pos_end))
     ####
     def parse_binary_operation(self, func: Callable, operator_tokentypes: list[TokenType], operators: list[Operator]) -> Result:
         res = Result()

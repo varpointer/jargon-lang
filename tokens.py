@@ -25,4 +25,4 @@ class Token:
         return self.token_type == token_type and value == self.value
     
     def match_keyword(self, keyword: str):
-            return (self.token_type == TokenType.KEYWORD) and (self.value == keyword)            
+        return (self.token_type == TokenType.KEYWORD) and (self.value == keyword)            
