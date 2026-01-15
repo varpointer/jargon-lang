@@ -6,7 +6,7 @@ TokenType = Enum("TokenType", [
     "EOF", "INT", "FLOAT", "PLUS", "MINUS", "ASTERISK", "SLASH", "L_PAREN", "R_PAREN",
     "STR", "CHAR", "GT", "GE", "LT", "LE", "EQEQ", "NOTEQ", "PIPE", "PIPEPIPE", "AND",
     "ANDAND", "CARET", "EXCLAMATION", "TILDE", "IDENTIFIER", "KEYWORD", "COLON", "EQUALS",
-    "TYPE", "SEMICOLON", "L_BRACE", "R_BRACE", "COMMA", "ARROW"
+    "TYPE", "SEMICOLON", "L_BRACE", "R_BRACE", "COMMA", "ARROW", "L_BRACKET", "R_BRACKET"
 ])
 
 class Token:

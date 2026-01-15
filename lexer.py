@@ -32,6 +32,8 @@ class Lexer:
         "}": TokenType.R_BRACE,
         ",": TokenType.COMMA,
         "->": TokenType.ARROW,
+        "[": TokenType.L_BRACKET,
+        "]": TokenType.R_BRACKET,
     }
     def __init__(self, text: str):
         self.text = text

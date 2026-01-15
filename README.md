@@ -1,11 +1,26 @@
 # JargonLang
-Version 0.20.1 (2025/1/14) 
+Version 0.21.0 (2025/1/15) 
 
 File extension: .jgl
 
 Contains a lexer and a parser 
 
-types: int, float, str, char
+types: int, float, str, char, array ( [type] )
+# Types
+## `int`
+An integer type. Just write the integer
+## `float`
+Floating point type. Any number with a decimal point is a `float`
+## `str`
+A string of characters surrounded by double-quotes
+## `char`
+A singular character surrounded by single-quotes
+## array `[type]`
+A list of elements separatedby commas, surrounded by brackets (`[]`) \
+ex:
+```
+var x: [int] = [2, 5, 8] 
+```
 # Operations: 
 ## Addition `a+b`
 Adds `a` and `b`

@@ -194,3 +194,14 @@ class ForNode(Node):
         return (
             f"[for [{self.init}; {self.cond}; {self.iter}] {self.block}]"
         )
+
+class ArrayNode(Node): 
+    def __init__(self, elements: list[Node], pos_start: pos.Position, pos_end: pos.Position):
+        self.elements = elements
+        self.pos_start = pos_start
+        self.pos_end = pos_end
+    def __repr__(self):
+        return (
+            f"(array {self.elements})" 
+        )
+   

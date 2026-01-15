@@ -1,4 +1,4 @@
-from types_ import Type as _Type
+from types_ import BasicType as _Type
 LETTERS_UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 LETTERS_LOWER = "abcdefghijklmnopqrstuvwxyz"
 LETTERS = LETTERS_UPPER + LETTERS_LOWER
@@ -24,9 +24,9 @@ TYPES: dict[str, _Type] = {
 }
 
 VERSION_MAJOR = 0
-VERSION_MINOR = 20
-VERSION_PATCH = 1
+VERSION_MINOR = 21
+VERSION_PATCH = 0
 
 RELEASE_YEAR  = 2026
 RELEASE_MONTH = 1
-RELEASE_DAY   = 14
+RELEASE_DAY   = 15

@@ -6,7 +6,7 @@ from operators import Operator
 from typing import Callable
 from error import Error
 from constants import KEYWORDS, TYPES
-from types_ import Type
+import types_ 
 
 class Parser:
     def __init__(self, tokens: list[Token]):
@@ -29,7 +29,7 @@ class Parser:
         if output.err:
             return output
         if self.index < len(self.tokens) - 1:
-            return output.error(Error("Unexpected token.", self.current_token.pos_start, self.current_token.pos_end))
+            return output.error(Error("Unexpected token. Expected EOF", self.current_token.pos_start, self.current_token.pos_end))
         return output
     
     # PARSING
@@ -48,7 +48,7 @@ class Parser:
         if self.current_token.match_keyword(KEYWORDS["declare_func"]):
             return self.parse_func_decl()
         else:
-            return res.error(Error("Unexpected token.", self.current_token.pos_start, self.current_token.pos_end))
+            return res.error(Error("Unexpected token. ", self.current_token.pos_start, self.current_token.pos_end))
     def parse_block(self) -> Result:
         res = Result()
         if self.current_token.token_type == TokenType.L_BRACE:
@@ -61,6 +61,8 @@ class Parser:
                 if statement.ok is None:
                     continue
                 nodes.append(statement.get_success())
+                if self.current_token.token_type == TokenType.EOF:
+                    return res.error(Error("Expected '}'", self.current_token.pos_start, self.current_token.pos_end))
             pos_end = self.current_token.pos_end
             self.advance()
             return res.success(n.BlockNode(nodes, pos_start, pos_end))
@@ -81,10 +83,9 @@ class Parser:
             if self.current_token.token_type != TokenType.COLON:
                 return res.error(Error("Expected ':'", self.current_token.pos_start, self.current_token.pos_end))
             self.advance()
-            if self.current_token.token_type != TokenType.TYPE:
-                return res.error(Error("Expected type", self.current_token.pos_start, self.current_token.pos_end))
-            var_type = TYPES[self.current_token.value]
-            self.advance()
+            var_type = res.process(self.parse_type())
+            if res.err: return res
+            var_type = var_type.get_success()
             if self.current_token.token_type == TokenType.EQUALS:
                 self.advance()
                 value = res.process(self.parse_expression())
@@ -96,7 +97,6 @@ class Parser:
             if self.current_token.token_type != TokenType.SEMICOLON: 
                 return res.error(Error("Expected semicolon", self.current_token.pos_start, self.current_token.pos_end))
             self.advance()
-
             return res.success(n.VarDeclareNode(variable, var_type, value, pos_start, self.current_token.pos_end)) # pyright: ignore[reportArgumentType]
         elif self.current_token.token_type == TokenType.L_BRACE:
             return self.parse_block()
@@ -179,7 +179,6 @@ class Parser:
                 if self.current_token.token_type != TokenType.SEMICOLON: 
                     return res.error(Error("Expected semicolon", self.current_token.pos_start, self.current_token.pos_end))
                 self.advance()
-            print(self.current_token)
             return parse_res
     def parse_expression(self) -> Result:
         return self.parse_equality_expr()
@@ -290,9 +289,25 @@ class Parser:
                 return res.success(n.VarAssignNode(identifier.value, value.get_success(), identifier.pos_start))
             return res.success(n.VarNode(identifier))
         elif self.current_token.token_type == TokenType.EOF:
-            raise Exception()
-            return res.error(Error("Expected expression", self.current_token.pos_start, self.current_token.pos_end))
-        return res.error(Error("Unexpected token", self.current_token.pos_start, self.current_token.pos_end))
+            return res.error(Error("Unexpected EOF", self.current_token.pos_start, self.current_token.pos_end))
+        elif self.current_token.token_type == TokenType.L_BRACKET:
+            pos_start = self.current_token.pos_start
+            self.advance()
+            elements = []
+            while True:
+                element = res.process(self.parse_expression())
+                if res.err: return res
+                elements.append(element.get_success())
+                if self.current_token.token_type != TokenType.COMMA:
+                    break
+                self.advance()
+            if self.current_token.token_type != TokenType.R_BRACKET:
+                return res.error(Error("Expected ']'", self.current_token.pos_start, self.current_token.pos_end))
+            pos_end = self.current_token.pos_end
+            self.advance()
+            return res.success(n.ArrayNode(elements, pos_start, self.current_token.pos_end))
+
+        return res.error(Error("Unexpected token. Expected expression", self.current_token.pos_start, self.current_token.pos_end))
     ####
     def parse_binary_operation(self, func: Callable, operator_tokentypes: list[TokenType], operators: list[Operator]) -> Result:
         res = Result()
@@ -340,11 +355,9 @@ class Parser:
                     Error("Expected ':'", self.current_token.pos_start, self.current_token.pos_end)
                 )
             self.advance()
-            if self.current_token.token_type != TokenType.TYPE: 
-                return res.error(
-                    Error("Expected a type", self.current_token.pos_start, self.current_token.pos_end)
-                )
-            args[arg_name] = TYPES[self.current_token.value]
+            type_ = res.process(self.parse_type())
+            if res.err: return res
+            args[arg_name] = type_.get_success()
             self.advance()
             if self.current_token.token_type != TokenType.COMMA:
                 break
@@ -354,12 +367,9 @@ class Parser:
         if self.current_token.token_type != TokenType.ARROW:
             return res.error(Error("Expected '->'.", self.current_token.pos_start, self.current_token.pos_end))
         self.advance()
-        if self.current_token.token_type != TokenType.TYPE: 
-            return res.error(
-                Error("Expected a type", self.current_token.pos_start, self.current_token.pos_end)
-            )
-        return_type = TYPES[self.current_token.value]
-        self.advance()
+        return_type = res.process(self.parse_type())
+        if res.err: return res
+        return_type = return_type.get_success()
         func_body = res.process(self.parse_block())
         if res.err: return res
         func_body = func_body.get_success()
@@ -392,3 +402,21 @@ class Parser:
             return res.success(n.IfNode(condition.get_success(), block, [], else_block, pos_start, else_block.pos_end))
         else:
             return res.success(n.IfNode(condition.get_success(), block, [], None, pos_start, block.pos_end))
+    def parse_type(self) -> Result:
+        res = Result()
+        if self.current_token.token_type == TokenType.TYPE:
+            type_elem = TYPES[self.current_token.value]
+            self.advance()
+            return res.success(types_.Type(types_.BasicType(type_elem)))
+        elif self.current_token.token_type == TokenType.L_BRACKET:
+            pos_start = self.current_token.pos_start
+            self.advance()
+            element_type = res.process(self.parse_type())
+            if res.err: return res
+            if self.current_token.token_type != TokenType.R_BRACKET:
+                return res.error(Error("Expected ']'.", self.current_token.pos_start, self.current_token.pos_end))
+            pos_end = self.current_token.pos_end
+            self.advance()
+            return res.success(types_.Type(types_.ArrayType(element_type.get_success())))
+        else:
+            return res.error(Error("Expected type", self.current_token.pos_start, self.current_token.pos_end))
