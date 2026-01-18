@@ -17,18 +17,22 @@ KEYWORDS: dict[str, str] = {
     "loop_threepart": "for",
     "loop_iter": "foreach",
     "value_in": "in",
+    "bool_true": "true",
+    "bool_false": "false",
 }
 TYPES: dict[str, _Type] = {
     "int": _Type.INT,
     "float": _Type.FLOAT,
     "char": _Type.CHAR,
     "str": _Type.STR,
+    "bool": _Type.BOOL,
+    "void": _Type.VOID,
 }
 
 VERSION_MAJOR = 0
-VERSION_MINOR = 22
+VERSION_MINOR = 23
 VERSION_PATCH = 0
 
 RELEASE_YEAR  = 2026
 RELEASE_MONTH = 1
-RELEASE_DAY   = 15
+RELEASE_DAY   = 18

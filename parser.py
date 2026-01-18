@@ -106,12 +106,16 @@ class Parser:
         elif self.current_token.match_keyword(KEYWORDS["return_value"]):
             pos_start = self.current_token.pos_start
             self.advance()
+            if self.current_token.token_type == TokenType.SEMICOLON:
+                pos_end = self.current_token.pos_end
+                self.advance()
+                return res.success(n.ReturnNode(None, pos_start, pos_end))
             value = res.process(self.parse_expression())
             if res.err: return res
             if self.current_token.token_type != TokenType.SEMICOLON: 
                 return res.error(Error("Expected semicolon", self.current_token.pos_start, self.current_token.pos_end))
             self.advance()
-            return res.success(n.ReturnNode(value.get_success() , pos_start))
+            return res.success(n.ReturnNode(value.get_success() , pos_start, value.get_success().pos_end))
         elif self.current_token.match_keyword(KEYWORDS["condition_main"]):
             return self.parse_conditional()
         elif self.current_token.match_keyword(KEYWORDS["loop_condition"]):
@@ -328,6 +332,14 @@ class Parser:
             pos_end = self.current_token.pos_end
             self.advance()
             return res.success(n.ArrayNode(elements, pos_start, self.current_token.pos_end))
+        elif self.current_token.match_keyword(KEYWORDS["bool_true"]):   
+            token = self.current_token
+            self.advance()
+            return res.success(n.BoolNode(True, token.pos_start, token.pos_end))
+        elif self.current_token.match_keyword(KEYWORDS["bool_false"]):
+            token = self.current_token
+            self.advance()
+            return res.success(n.BoolNode(False, token.pos_start, token.pos_end))
 
         return res.error(Error("Unexpected token.", self.current_token.pos_start, self.current_token.pos_end))
     ####

@@ -1,7 +1,7 @@
 from enum import Enum
 
-BasicType = Enum("Type", [
-    "INT", "FLOAT", "STR", "CHAR"
+BasicType = Enum("BasicType", [
+    "INT", "FLOAT", "STR", "CHAR", "BOOL", "VOID"
 ])
 
 class ArrayType:
@@ -15,4 +15,3 @@ class Type:
         self.value = type_
     def __repr__(self):
         return f"<{self.value}>"
-

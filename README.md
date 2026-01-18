@@ -1,5 +1,5 @@
 # JargonLang
-Version 0.22.0 (2025/1/15) 
+Version 0.23.0 (2025/1/18) 
 
 File extension: .jgl
 
@@ -17,6 +17,10 @@ A string of characters surrounded by double-quotes
 A singular character surrounded by single-quotes
 ## array `[type]`
 A list of elements separatedby commas, surrounded by brackets (`[]`) \
+## `bool`
+A boolean value, which can be either `true` or `false`
+## `void`
+Used for functions which don't return a value. Doesn't really represent any value.
 ex:
 ```
 var x: [int] = [2, 5, 8] 
@@ -59,7 +63,8 @@ Used to declare a function. You must specify the name, return type and the types
 ```
 return x;
 ```
-Used to return a value from a function.
+Used to return a value from a function. \
+Can just be `return;` for functions that return `void`
 ## `if`
 ```if (cond) { code; }```
 Used for conditional statements.\ If `cond` is true, `code` is executed

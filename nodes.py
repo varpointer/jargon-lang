@@ -118,10 +118,10 @@ class FuncDeclNode(Node):
         return f"(function {self.name}({self.args})) -> {self.return_type} {self.body})"
 
 class ReturnNode(Node):
-    def __init__(self, value: Node, pos_start: pos.Position):
+    def __init__(self, value: Node | None, pos_start: pos.Position, pos_end: pos.Position):
         self.value = value
         self.pos_start = pos_start
-        self.pos_end = value.pos_end
+        self.pos_end = pos_end
     def __repr__(self):
         return f"(return {self.value})"
 
@@ -216,3 +216,11 @@ class ForEachNode(Node):
         return (
             f"[foreach [{self.var_name} in {self.container}] {self.block}]"
         )
+
+class BoolNode(Node):
+    def __init__(self, value: bool, pos_start: pos.Position, pos_end: pos.Position):
+        self.pos_start = pos_start
+        self.pos_end = pos_end
+        self.value = value
+    def __repr__(self):
+        return f"(bool {self.value})"
