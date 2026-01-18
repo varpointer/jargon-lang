@@ -392,7 +392,6 @@ class Parser:
             type_ = res.process(self.parse_type())
             if res.err: return res
             args[arg_name] = type_.get_success()
-            self.advance()
             if self.current_token.token_type != TokenType.COMMA:
                 break
             self.advance()

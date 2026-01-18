@@ -1,5 +1,5 @@
 # JargonLang
-Version 0.23.0 (2025/1/18) 
+Version 0.23.1 (2025/1/18) 
 
 File extension: .jgl
 
